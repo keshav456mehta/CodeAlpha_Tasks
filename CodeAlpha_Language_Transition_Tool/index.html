@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroLang — Language Translator</title>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --aurora1: #7c3aed;
+  --aurora2: #06b6d4;
+  --aurora3: #10b981;
+  --aurora4: #ec4899;
+  --glass-bg: rgba(10, 5, 30, 0.72);
+  --glass-border: rgba(140, 100, 255, 0.18);
+  --accent: #a78bfa;
+  --accent2: #22d3ee;
+  --text: #e8e0ff;
+  --text-muted: rgba(200,185,255,0.55);
+  --input-bg: rgba(20,10,50,0.6);
+  --btn-bg: linear-gradient(135deg, #7c3aed, #06b6d4);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  min-height: 100vh;
+  background: #03000f;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ── CANVAS BACKGROUND ── */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── LAYOUT ── */
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px 60px;
+}
+
+/* ── HEADER ── */
+header {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 0 0;
+}
+
+.logo {
+  font-family: 'Oxanium', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  background: linear-gradient(120deg, #a78bfa, #22d3ee, #34d399);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+}
+
+.logo span {
+  opacity: 0.7;
+  font-weight: 300;
+}
+
+.badge {
+  font-family: 'Oxanium', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  border: 1px solid rgba(167,139,250,0.3);
+  border-radius: 20px;
+  padding: 5px 14px;
+  text-transform: uppercase;
+}
+
+/* ── HERO TITLE ── */
+.hero {
+  text-align: center;
+  margin: 48px 0 36px;
+}
+
+.hero h1 {
+  font-family: 'Oxanium', sans-serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #c4b5fd 0%, #67e8f9 50%, #6ee7b7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 14px;
+}
+
+.hero p {
+  font-size: 15px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* ── QUICK CHIPS ── */
+.quick-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.chip {
+  font-family: 'Oxanium', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(140,100,255,0.25);
+  background: rgba(120,80,255,0.08);
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.chip:hover, .chip.active {
+  background: rgba(167,139,250,0.2);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── MAIN CARD ── */
+.card {
+  width: 100%;
+  max-width: 900px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 32px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 0 60px rgba(124,58,237,0.12), 0 0 120px rgba(6,182,212,0.06);
+}
+
+/* ── LANG BAR ── */
+.lang-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.lang-select-wrap {
+  flex: 1;
+}
+
+.lang-label {
+  font-family: 'Oxanium', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+select {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  padding: 10px 14px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a78bfa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: border-color 0.2s;
+}
+select:hover, select:focus { border-color: rgba(167,139,250,0.5); }
+
+.swap-btn {
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(167,139,250,0.3);
+  border-radius: 50%;
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 18px;
+  margin-top: 22px;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+.swap-btn:hover { background: rgba(167,139,250,0.2); transform: rotate(180deg); }
+
+/* ── TEXT AREAS ── */
+.text-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 640px) {
+  .text-grid { grid-template-columns: 1fr; }
+  .lang-bar { flex-direction: column; }
+  .swap-btn { margin-top: 0; transform: rotate(90deg); }
+}
+
+.text-panel {
+  position: relative;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.panel-title {
+  font-family: 'Oxanium', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.panel-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.icon-btn {
+  background: rgba(120,80,255,0.1);
+  border: 1px solid rgba(167,139,250,0.15);
+  border-radius: 8px;
+  color: var(--accent);
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.icon-btn:hover { background: rgba(167,139,250,0.2); color: #fff; }
+
+textarea {
+  width: 100%;
+  min-height: 180px;
+  background: var(--input-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 16px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+textarea:focus { border-color: rgba(167,139,250,0.5); }
+textarea::placeholder { color: var(--text-muted); }
+#output { color: #a5f3fc; cursor: default; }
+
+.char-count {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* ── TRANSLATE BUTTON ── */
+.translate-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--btn-bg);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-family: 'Oxanium', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.translate-btn:hover { opacity: 0.9; }
+.translate-btn:active { transform: scale(0.99); }
+.translate-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s;
+}
+.translate-btn:hover::after { left: 150%; }
+
+/* ── STATUS ── */
+.status {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  min-height: 20px;
+  font-family: 'Oxanium', sans-serif;
+  letter-spacing: 1px;
+}
+.status.error { color: #f87171; }
+.status.success { color: #34d399; }
+
+/* ── STATS ROW ── */
+.stats-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  font-family: 'Oxanium', sans-serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  border: 1px solid rgba(140,100,255,0.15);
+  border-radius: 20px;
+  padding: 6px 18px;
+  text-transform: uppercase;
+}
+.stat-pill span { color: var(--accent2); font-weight: 600; }
+
+/* ── FOOTER ── */
+footer {
+  margin-top: 40px;
+  font-size: 12px;
+  color: rgba(200,185,255,0.3);
+  letter-spacing: 1px;
+  font-family: 'Oxanium', sans-serif;
+}
+
+/* ── LOADING DOTS ── */
+.dots { display: inline-flex; gap: 4px; }
+.dots span {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: bounce 0.8s infinite;
+}
+.dots span:nth-child(2) { animation-delay: 0.15s; }
+.dots span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="page">
+  <header>
+    <div class="logo">NEURO<span>LANG</span></div>
+    <div class="badge">100+ Languages</div>
+  </header>
+
+  <div class="hero">
+    <h1>Make Every Conversation Global</h1>
+    <p>Aurora-powered real-time translation across 100+ languages</p>
+  </div>
+
+  <div class="quick-chips" id="quickChips">
+    <div class="chip" data-lang="es">🇪🇸 Spanish</div>
+    <div class="chip" data-lang="fr">🇫🇷 French</div>
+    <div class="chip" data-lang="de">🇩🇪 German</div>
+    <div class="chip" data-lang="ja">🇯🇵 Japanese</div>
+    <div class="chip" data-lang="zh">🇨🇳 Chinese</div>
+    <div class="chip" data-lang="ar">🇸🇦 Arabic</div>
+    <div class="chip" data-lang="hi">🇮🇳 Hindi</div>
+    <div class="chip" data-lang="ko">🇰🇷 Korean</div>
+  </div>
+
+  <div class="card">
+    <div class="lang-bar">
+      <div class="lang-select-wrap">
+        <div class="lang-label">Source Language</div>
+        <select id="sourceLang">
+          <option value="auto">Auto Detect</option>
+        </select>
+      </div>
+      <button class="swap-btn" id="swapBtn" title="Swap languages">⇄</button>
+      <div class="lang-select-wrap">
+        <div class="lang-label">Target Language</div>
+        <select id="targetLang"></select>
+      </div>
+    </div>
+
+    <div class="text-grid">
+      <div class="text-panel">
+        <div class="panel-header">
+          <div class="panel-title">Input Text</div>
+          <div class="panel-actions">
+            <button class="icon-btn" id="clearBtn" title="Clear">✕</button>
+            <button class="icon-btn" id="speakSrc" title="Speak">🔊</button>
+          </div>
+        </div>
+        <textarea id="input" placeholder="Enter text to translate…" maxlength="5000"></textarea>
+        <div class="char-count"><span id="charCount">0</span> / 5000</div>
+      </div>
+
+      <div class="text-panel">
+        <div class="panel-header">
+          <div class="panel-title">Translation</div>
+          <div class="panel-actions">
+            <button class="icon-btn" id="copyBtn" title="Copy">📋</button>
+            <button class="icon-btn" id="speakOut" title="Speak">🔊</button>
+          </div>
+        </div>
+        <textarea id="output" readonly placeholder="Translation appears here…"></textarea>
+      </div>
+    </div>
+
+    <button class="translate-btn" id="translateBtn">⚡ Translate Now</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-pill">Translations: <span id="countStat">0</span></div>
+    <div class="stat-pill">Languages: <span>100+</span></div>
+    <div class="stat-pill">Powered by: <span>MyMemory API</span></div>
+  </div>
+
+  <footer>NEUROLANG © 2025 — Build Bridges, Not Barriers</footer>
+</div>
+
+<script src="languages.js"></script>
+<script>
+// ── BACKGROUND CANVAS: AURORA + CONSTELLATION ──
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Stars for constellation
+const stars = Array.from({length: 120}, () => ({
+  x: Math.random(),
+  y: Math.random(),
+  r: Math.random() * 1.4 + 0.3,
+  twinkle: Math.random() * Math.PI * 2,
+  speed: 0.02 + Math.random() * 0.03
+}));
+
+// Shooting stars
+const shooters = [];
+function spawnShooter() {
+  if (Math.random() > 0.4) return;
+  shooters.push({
+    x: Math.random() * canvas.width * 0.6,
+    y: Math.random() * canvas.height * 0.4,
+    vx: 5 + Math.random() * 4,
+    vy: 2 + Math.random() * 3,
+    len: 100 + Math.random() * 80,
+    life: 1
+  });
+}
+setInterval(spawnShooter, 1400);
+
+// Aurora blobs
+const blobs = [
+  { color: [124, 58, 237], phase: 0, phaseSpeed: 0.007 },
+  { color: [6, 182, 212], phase: 1.5, phaseSpeed: 0.005 },
+  { color: [16, 185, 129], phase: 3, phaseSpeed: 0.006 },
+  { color: [236, 72, 153], phase: 4.5, phaseSpeed: 0.008 }
+];
+
+let t = 0;
+
+function draw() {
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = 'rgba(3,0,15,0.18)';
+  ctx.fillRect(0, 0, W, H);
+
+  // ── AURORA BLOBS ──
+  blobs.forEach(b => {
+    const [r, g, bl] = b.color;
+    b.phase += b.phaseSpeed;
+    const x = W * 0.5 + Math.sin(b.phase * 1.1) * W * 0.38;
+    const y = H * 0.45 + Math.cos(b.phase * 0.9) * H * 0.35;
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, 280);
+    grad.addColorStop(0, `rgba(${r},${g},${bl},0.22)`);
+    grad.addColorStop(1, `rgba(${r},${g},${bl},0)`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+  });
+
+  // ── AURORA SINE WAVES ──
+  for (let w = 0; w < 4; w++) {
+    ctx.beginPath();
+    const colors = ['rgba(167,139,250,', 'rgba(34,211,238,', 'rgba(52,211,153,', 'rgba(244,114,182,'];
+    ctx.strokeStyle = colors[w] + (0.12 + w * 0.04) + ')';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += 3) {
+      const y = H * 0.5
+        + Math.sin((x * 0.008) + t + w * 0.9) * 60
+        + Math.sin((x * 0.013) - t * 1.2 + w * 0.5) * 35
+        + Math.sin((x * 0.005) + t * 0.7 + w * 1.4) * 25;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // ── CONSTELLATION LINES ──
+  const W1 = W, H1 = H;
+  for (let i = 0; i < stars.length; i++) {
+    for (let j = i + 1; j < stars.length; j++) {
+      const dx = (stars[i].x - stars[j].x) * W1;
+      const dy = (stars[i].y - stars[j].y) * H1;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 100) {
+        ctx.strokeStyle = `rgba(167,139,250,${0.09 * (1 - dist/100)})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(stars[i].x * W1, stars[i].y * H1);
+        ctx.lineTo(stars[j].x * W1, stars[j].y * H1);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // ── STARS ──
+  stars.forEach(s => {
+    s.twinkle += s.speed;
+    const alpha = 0.4 + 0.6 * Math.abs(Math.sin(s.twinkle));
+    ctx.beginPath();
+    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(220,200,255,${alpha})`;
+    ctx.fill();
+  });
+
+  // ── SHOOTING STARS ──
+  for (let i = shooters.length - 1; i >= 0; i--) {
+    const s = shooters[i];
+    const tailLen = s.len / 5;
+    const grad = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * tailLen, s.y - s.vy * tailLen);
+    grad.addColorStop(0, `rgba(255,255,255,${s.life})`);
+    grad.addColorStop(0.4, `rgba(167,139,250,${s.life * 0.6})`);
+    grad.addColorStop(1, 'rgba(34,211,238,0)');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(s.x, s.y);
+    ctx.lineTo(s.x - s.vx * tailLen, s.y - s.vy * tailLen);
+    ctx.stroke();
+    s.x += s.vx;
+    s.y += s.vy;
+    s.life -= 0.012;
+    if (s.life <= 0 || s.x > W) shooters.splice(i, 1);
+  }
+
+  t += 0.012;
+  requestAnimationFrame(draw);
+}
+
+// Initial fill then animate
+ctx.fillStyle = '#03000f';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+draw();
+
+// ── APP LOGIC ──
+const LANGS = typeof LANGUAGES !== 'undefined' ? LANGUAGES : [
+  {code:'es',name:'Spanish'},{code:'fr',name:'French'},{code:'de',name:'German'},
+  {code:'ja',name:'Japanese'},{code:'zh',name:'Chinese'},{code:'ar',name:'Arabic'},
+  {code:'hi',name:'Hindi'},{code:'ko',name:'Korean'},{code:'pt',name:'Portuguese'},
+  {code:'it',name:'Italian'},{code:'ru',name:'Russian'},{code:'nl',name:'Dutch'},
+  {code:'tr',name:'Turkish'},{code:'pl',name:'Polish'},{code:'sv',name:'Swedish'},
+  {code:'no',name:'Norwegian'},{code:'da',name:'Danish'},{code:'fi',name:'Finnish'},
+  {code:'el',name:'Greek'},{code:'he',name:'Hebrew'},{code:'th',name:'Thai'},
+  {code:'vi',name:'Vietnamese'},{code:'id',name:'Indonesian'},{code:'ms',name:'Malay'},
+  {code:'cs',name:'Czech'},{code:'ro',name:'Romanian'},{code:'hu',name:'Hungarian'},
+  {code:'uk',name:'Ukrainian'},{code:'bn',name:'Bengali'},{code:'fa',name:'Persian'}
+];
+
+const srcSel = document.getElementById('sourceLang');
+const tgtSel = document.getElementById('targetLang');
+
+LANGS.forEach(l => {
+  const o1 = new Option(l.name, l.code);
+  const o2 = new Option(l.name, l.code);
+  srcSel.appendChild(o1);
+  tgtSel.appendChild(o2);
+});
+tgtSel.value = 'es';
+
+// Quick chips
+document.getElementById('quickChips').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  tgtSel.value = chip.dataset.lang;
+});
+
+// Swap
+document.getElementById('swapBtn').addEventListener('click', () => {
+  const inp = document.getElementById('input');
+  const out = document.getElementById('output');
+  const sv = srcSel.value, tv = tgtSel.value;
+  if (sv === 'auto') return;
+  srcSel.value = tv;
+  tgtSel.value = sv;
+  inp.value = out.value;
+  out.value = '';
+  updateChar();
+});
+
+// Char count
+const inp = document.getElementById('input');
+function updateChar() {
+  document.getElementById('charCount').textContent = inp.value.length;
+}
+inp.addEventListener('input', updateChar);
+inp.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'Enter') translate();
+});
+
+// Clear
+document.getElementById('clearBtn').addEventListener('click', () => {
+  inp.value = '';
+  document.getElementById('output').value = '';
+  document.getElementById('status').textContent = '';
+  updateChar();
+});
+
+// Copy
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const out = document.getElementById('output').value;
+  if (!out) return;
+  navigator.clipboard.writeText(out).then(() => {
+    setStatus('Copied to clipboard ✓', 'success');
+    setTimeout(() => setStatus(''), 1800);
+  });
+});
+
+// TTS
+document.getElementById('speakSrc').addEventListener('click', () => speak(inp.value, srcSel.value === 'auto' ? 'en' : srcSel.value));
+document.getElementById('speakOut').addEventListener('click', () => speak(document.getElementById('output').value, tgtSel.value));
+
+function speak(text, lang) {
+  if (!text) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+// Status helper
+function setStatus(msg, type = '') {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status' + (type ? ' ' + type : '');
+}
+
+// Translate count
+let count = 0;
+
+// Translate
+async function translate() {
+  const text = inp.value.trim();
+  if (!text) { setStatus('Enter some text first ✦', 'error'); return; }
+
+  const src = srcSel.value;
+  const tgt = tgtSel.value;
+
+  document.getElementById('output').value = '';
+  document.getElementById('translateBtn').disabled = true;
+  document.getElementById('translateBtn').textContent = 'Translating…';
+  setStatus('');
+
+  const langpair = `${src === 'auto' ? 'autodetect' : src}|${tgt}`;
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langpair}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.responseStatus === 200) {
+      document.getElementById('output').value = data.responseData.translatedText;
+      count++;
+      document.getElementById('countStat').textContent = count;
+      setStatus('Translation complete ✦', 'success');
+    } else {
+      setStatus('Translation failed — try again', 'error');
+    }
+  } catch {
+    setStatus('Network error — check connection', 'error');
+  } finally {
+    document.getElementById('translateBtn').disabled = false;
+    document.getElementById('translateBtn').textContent = '⚡ Translate Now';
+  }
+}
+
+document.getElementById('translateBtn').addEventListener('click', translate);
+</script>
+</body>
+</html>

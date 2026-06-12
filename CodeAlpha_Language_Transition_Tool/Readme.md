@@ -1,87 +1,82 @@
-# ⚡ NEON Translate
+# 🌍 NeuroLang — AI Language Translator
 
-<div align="center">
+Break every language barrier.  
+Connect people, not just words.
 
-### 🌍 Break Every Language Barrier
-
-A futuristic AI-powered language translator with a stunning neon cyberpunk interface, real-time translation, speech synthesis, auto language detection, and support for 100+ languages.
-
-![HTML](https://img.shields.io/badge/HTML-5-orange)
-![CSS](https://img.shields.io/badge/CSS-3-blue)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow)
-![Languages](https://img.shields.io/badge/Languages-100+-brightgreen)
-
-</div>
+NeuroLang is a modern web-based language translator supporting **100+ languages** with real-time translation, text-to-speech, language detection, and a stunning aurora-inspired UI.
 
 ---
 
 ## ✨ Features
 
-✅ Translate text between 100+ languages
-
-✅ Auto language detection
-
-✅ Text-to-speech for input and translated text
-
-✅ Copy translated output instantly
-
-✅ Language swap functionality
-
-✅ Real-time character counter
-
-✅ Responsive design for desktop and mobile
-
-✅ Futuristic neon cyberpunk UI
+- 🌐 Translate between 100+ languages
+- 🔍 Automatic language detection
+- 🔄 One-click language swap
+- 🔊 Text-to-Speech support
+- 📋 Copy translated text instantly
+- ⚡ Real-time translation using MyMemory API
+- 🎨 Aurora & constellation animated background
+- 📱 Fully responsive design
 
 ---
 
-## 🛠️ Technologies Used
+## 🛠️ Tech Stack
 
 - HTML5
 - CSS3
-- JavaScript (Vanilla JS)
-- Google Translate API
+- JavaScript
+- MyMemory Translation API
 - Web Speech API
 
 ---
 
-## 📸 Preview
+## 📂 Project Structure
 
-A modern neon-themed translation platform inspired by futuristic cyberpunk aesthetics with glowing effects, animated interactions, and a sleek user experience.
-
----
-
-## 🚀 How to Run
-
-1. Download the project files.
-2. Keep both files in the same folder:
-   - `option5-neon.html`
-   - `languages.js`
-3. Open `option5-neon.html` in your browser.
-4. Start translating instantly.
+```text
+NeuroLang/
+├── index.html
+├── languages.js
+└── README.md
+```
 
 ---
 
-## 🎯 Key Highlights
+## 🚀 Getting Started
 
-- Supports 100+ global languages
-- Fast and lightweight
-- No installation required
-- Clean single-page application
-- Beginner-friendly codebase
+```bash
+git clone https://github.com/your-username/NeuroLang.git
+cd NeuroLang
+```
+
+Simply open:
+
+```bash
+index.html
+```
+
+in your browser.
 
 ---
 
-## 📚 Learning Outcomes
+## 🌟 Highlights
 
-This project helped me learn:
-
-- API Integration
-- DOM Manipulation
-- Async JavaScript
-- Responsive Web Design
+- 100+ Supported Languages
+- Auto Language Detection
 - Speech Synthesis
-- Modern UI/UX Design
+- Character Counter
+- Quick Language Shortcuts
+- Animated Aurora Background
+- Mobile-Friendly Interface
+
+---
+
+## 🎯 Use Cases
+
+- Language Learning
+- Travel Communication
+- International Collaboration
+- Content Translation
+- Quick Everyday Translations
 
 ---
 
@@ -89,8 +84,6 @@ This project helped me learn:
 
 **Keshav Mehta**
 
-Artificial Intelligence Intern @ CodeAlpha
+Built with the vision of making communication seamless across languages.
 
----
-
-⭐ If you like this project, consider giving it a star.
+⭐ If you like this project, consider giving it a star!

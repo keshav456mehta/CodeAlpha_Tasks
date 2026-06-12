@@ -11,4 +11,4 @@ Each task is organized in its own folder with a dedicated README containing proj
 
 ## 📜 Internship
 
-Completed as part of the Artificial Intelligence Internship Program at :contentReference[oaicite:0]{index=0}
+Completed as part of the Artificial Intelligence Internship Program 
